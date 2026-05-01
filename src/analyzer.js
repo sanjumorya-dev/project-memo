@@ -25,7 +25,7 @@ export async function analyzeFiles({ root, files, priorState, verbose = false })
       parsed = previous.analysis;
     } else {
       changedCount += 1;
-      parsed = parseFile(relativePath, source);
+      parsed = await parseFile(relativePath, source);
       changeEvents.push({ type: previous ? 'updated' : 'added', file: relativePath });
       if (verbose) console.log(`analyzed ${relativePath}`);
     }
@@ -43,13 +43,13 @@ export async function analyzeFiles({ root, files, priorState, verbose = false })
   return { fileState, fileSummaries, changeEvents, changedCount, unchangedCount };
 }
 
-function parseFile(relativePath, source) {
+async function parseFile(relativePath, source) {
   const ext = path.extname(relativePath).toLowerCase();
   let parsed = { imports: [], exports: [], functions: [], classes: [] };
 
   try {
     if (['.js', '.mjs', '.cjs', '.ts', '.tsx', '.jsx'].includes(ext)) {
-      parsed = parseJavaScript(source, ext);
+      parsed = await parseJavaScript(source, ext);
     } else if (ext === '.py') {
       parsed = parsePython(source);
     }
