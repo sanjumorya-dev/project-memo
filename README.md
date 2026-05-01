@@ -5,74 +5,52 @@
 ## What it generates
 
 - `PROJECT_MAP.md`
-  - Architecture overview
-  - Inferred flow and entrypoints
-  - Key module connectivity
 - `FILE_INDEX.md`
-  - File-by-file structural summaries
-  - Functions, classes, imports/exports
-  - Call relationships (calls/called-by)
 - `CHANGELOG_AI.md`
-  - Append-only structural change log
-
-It also writes cached state to `.project-memory/state.json` for incremental runs.
+- `.project-memory/state.json` (incremental cache)
 
 ## Features
 
-- Recursive scanning with ignore rules (`node_modules`, `.git`, build outputs, etc.)
+- Recursive scanning with ignore rules and `.gitignore` support
 - Multi-language support (JavaScript, TypeScript, Python)
-- AST-based parsing for JS/TS using Babel
-- Lightweight Python structural parser
-- Dependency graph construction from import relationships
-- Incremental updates via per-file content hash
-- Efficient summaries designed to minimize token usage
+- Incremental updates using per-file SHA-256 hashes
+- Dependency graph and entrypoint inference
+- Compact file summaries for token efficiency
+- JS/TS parsing mode:
+  - **AST mode** when Babel packages are available
+  - **Fallback regex mode** when they are not available
 
 ## Install / Run
-
-### Local usage
 
 ```bash
 npm install
 node src/cli.js --root /path/to/target/project
 ```
 
-### As CLI (same repo)
+or
 
 ```bash
-npm install
 npx project-memory --root /path/to/target/project
 ```
 
 ## CLI options
 
-- `--root <path>`: target directory (default: current directory)
-- `--verbose`: print analyzed changed files
-- `--with-ai`: reserved hook for optional AI summarization plugin
-
-## Example
-
-```bash
-node src/cli.js --root . --verbose
-```
-
-Output:
-- scans supported files
-- updates only changed files in cache
-- rewrites `PROJECT_MAP.md` and `FILE_INDEX.md`
-- appends meaningful add/update/delete events to `CHANGELOG_AI.md`
+- `--root <path>`: target directory
+- `--verbose`: print changed files that were re-analyzed
+- `--with-ai`: reserved extension flag
 
 ## Project structure
 
 ```text
 project-memory/
   src/
-    analyzer.js
     cli.js
-    dependencyGraph.js
     index.js
     scanner.js
-    state.js
+    analyzer.js
+    dependencyGraph.js
     summarizer.js
+    state.js
     output/writers.js
     parsers/javascript.js
     parsers/python.js
@@ -81,9 +59,6 @@ project-memory/
   README.md
 ```
 
-## Plugin-ready extension points
+## Notes
 
-- `src/parsers/`: add new language parser modules
-- `src/summarizer.js`: integrate optional AI summarization strategy
-- `src/output/writers.js`: customize markdown layout or add extra memory artifacts
-
+If your environment blocks npm registry access, the tool still runs for many projects using regex JS parsing fallback. Installing optional Babel dependencies improves accuracy.
