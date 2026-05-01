@@ -1,0 +1,25 @@
+{
+  "name": "project-memory",
+  "version": "1.0.0",
+  "description": "Persistent project memory generator for AI agents",
+  "type": "module",
+  "bin": {
+    "project-memory": "./src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/cli.js",
+    "lint": "node src/cli.js --help"
+  },
+  "keywords": [
+    "ai",
+    "codebase",
+    "memory",
+    "indexing",
+    "ast"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@babel/parser": "^7.27.1",
+    "@babel/traverse": "^7.27.1"
+  }
+}
